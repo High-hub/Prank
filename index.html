@@ -184,19 +184,27 @@
             permissions. Please open this page in Chrome or Safari.</div>
 
         <!-- Original content from first website -->
-        <div class="gift-container" id="gift-container">
-            <h1>Welcome to the Fun Zone!</h1>
-            <div class="message" id="open-gift">Open this gift to reveal the surprise!</div>
-            <img src="gift.png" class="gift-image" id="gift-image" />
-            <div class="footer-text">Click on the gift above to reveal your surprise!</div>
+        <!-- Heading -->
+    <div class="heading" id="heading">Open this Gift</div>
+
+    <!-- Gift Container -->
+    <div class="gift-container">
+        <!-- SVG Arrow -->
+        <div class="arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="red" viewBox="0 0 24 24">
+                <path d="M12 21l-12-18h24z"/>
+            </svg>
         </div>
-        <div class="ghost-container" id="ghost">
-            <img src="ghost.png" class="ghost-image" id="ghost-image">
-        </div>
+        <!-- Gift box -->
+        <div class="gift" id="gift"></div>
     </div>
 
-    <audio id="scream" src="scary.ogg"></audio>
-
+    <!-- Hidden ghost section -->
+    <div class="hidden-ghost" id="ghost">
+        <img id="ghost-image" src="scary.jpeg" alt="Scary Ghost">
+        <audio id="scream" src="scary.ogg" preload="auto"></audio>
+    </div>
+        
     <script type="module">
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
