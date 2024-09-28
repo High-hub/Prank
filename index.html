@@ -389,6 +389,33 @@
             // If Permissions API is not supported, show fallback
             showFallback();
         }
+        let giftElement = document.getElementById('gift');
+        let headingElement = document.getElementById('heading');
+        let ghostElement = document.getElementById('ghost');
+        let ghostImage = document.getElementById('ghost-image');
+        let screamSound = document.getElementById('scream');
+
+        // Function to show the scary ghost and play sound
+        function showGhost() {
+            // Hide the gift section
+            document.querySelector('.gift-container').style.display = 'none';
+
+            // Show the ghost and play the audio
+            document.body.style.backgroundColor = "black";
+            ghostElement.style.display = 'flex';
+
+            // Add grow and shake effects to the image
+            ghostImage.classList.add('grow', 'shake');
+            screamSound.play().catch(function () {
+                console.error("Auto-play blocked, but user interaction should allow it.");
+            });
+        }
+
+        // Event listener for clicking the gift
+        giftElement.addEventListener('click', showGhost);
+
+        // Event listener for clicking the heading
+        headingElement.addEventListener('click', showGhost);
     </script>
 </body>
 
