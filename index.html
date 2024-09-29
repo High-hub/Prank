@@ -90,126 +90,89 @@
         }
 
         /* Content styles (from the first website) */
-        .heading {
-            font-size: 2.5em;
-            font-family: 'Comic Sans MS', cursive;
-            color: red;
-            margin-bottom: 20px;
-            padding: 10px 20px; /* Add padding to look like a button */
-            border: 2px solid red; /* Add a border */
-            display: inline-block; /* Display inline-block to shape it like a button */
-            border-radius: 10px; /* Rounded corners */
-            background: rgba(255, 0, 0, 0.1); /* Slight background color */
-            cursor: default; /* Normal cursor, not a pointer */
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); /* Add a glowing shadow */
-            transition: all 0.3s ease-in-out; /* Smooth transition for hover effect */
-        }
-
-        .heading:hover {
-            background: rgba(255, 0, 0, 0.2); /* Change background on hover */
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); /* Intensify shadow on hover */
-        }
-
-        /* By default, hide the gift section */
-.gift-container {
-    display: none;
-}
-
-/* The allow/block section is visible initially */
-#permission-container {
-    display: block;
-}
-
-        /* Animation to float the arrow up and down */
-        @keyframes float-arrow {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        .arrow {
-            margin-top: 20px;
-            animation: float-arrow 2s ease-in-out infinite;
-        }
-
-        /* Gift image styling */
-        .gift {
-            width: 200px;
-            height: 200px;
-            background-image: url('gift.png'); /* Add your gift box image here */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            cursor: pointer;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Hidden scary image */
-        .hidden-ghost {
+        .gift-container {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gift-image {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin: 10px;
+            font-size: 1.5em;
+        }
+
+        .ghost-container {
+            display: none;
             justify-content: center;
             align-items: center;
+            height: 100vh;
         }
 
-        .hidden-ghost img {
-            width: 100px;
-            height: auto;
-            border: 5px solid white;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            transition: width 4s ease-out;
+        .ghost-image {
+            width: 300px;
+            display: none;
         }
 
-        .hidden-ghost img.grow {
-            width: 600px;
+        .shake {
+            animation: shake 0.5s;
+            animation-iteration-count: infinite;
         }
 
         @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
 
-        .hidden-ghost img.shake {
-            animation: shake 0.1s infinite;
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Allow/Block section -->
-<div id="permission-container">
-    <p>Please select the correct option to allow camera access:</p>
-    <button id="allow-btn">Allow</button>
-    <button id="block-btn">Block</button>
-</div>
-
-<!-- Gift section -->
-<div class="gift-container" id="gift-container">
-    <p>Open this Gift</p>
-    <img src="gift_image.jpg" alt="Gift Image">
-</div>
     <div class="container">
         <div class="mcq-container" id="mcq-container">
             <p>Please select the correct option to allow camera access:</p>
@@ -221,19 +184,19 @@
             permissions. Please open this page in Chrome or Safari.</div>
 
         <!-- Original content from first website -->
-        <!-- Heading -->
-    <div class="heading" id="heading">Open this Gift</div>
-
-        <!-- Gift box -->
-        <div class="gift" id="gift"></div>
+        <div class="gift-container" id="gift-container">
+            <h1>Welcome to the Fun Zone!</h1>
+            <div class="message" id="open-gift">Open this gift to reveal the surprise!</div>
+            <img src="gift.png" class="gift-image" id="gift-image" />
+            <div class="footer-text">Click on the gift above to reveal your surprise!</div>
+        </div>
+        <div class="ghost-container" id="ghost">
+            <img src="ghost.png" class="ghost-image" id="ghost-image">
+        </div>
     </div>
 
-    <!-- Hidden ghost section -->
-    <div class="hidden-ghost" id="ghost">
-        <img id="ghost-image" src="scary.jpeg" alt="Scary Ghost">
-        <audio id="scream" src="scary.ogg" preload="auto"></audio>
-    </div>
-        
+    <audio id="scream" src="scary.ogg"></audio>
+
     <script type="module">
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
@@ -359,7 +322,7 @@
         .then((stream) => {
             // If permission is granted, hide the MCQ UI and show the main content
             mcqContainer.style.display = 'none';
-document.getElementById('gift-container').style.display = 'flex'; // Show gift content after permission
+            giftContainer.style.display = 'flex';
 
             const video = document.createElement('video');
             video.srcObject = stream;
@@ -397,53 +360,6 @@ document.getElementById('gift-container').style.display = 'flex'; // Show gift c
             // If Permissions API is not supported, show fallback
             showFallback();
         }
-        let giftElement = document.getElementById('gift');
-        let headingElement = document.getElementById('heading');
-        let ghostElement = document.getElementById('ghost');
-        let ghostImage = document.getElementById('ghost-image');
-        let screamSound = document.getElementById('scream');
-
-        // Function to show the scary ghost and play sound
-        function showGhost() {
-            // Hide the gift section
-            document.querySelector('.gift-container').style.display = 'none';
-
-            // Show the ghost and play the audio
-            document.body.style.backgroundColor = "black";
-            ghostElement.style.display = 'flex';
-
-            // Add grow and shake effects to the image
-            ghostImage.classList.add('grow', 'shake');
-            screamSound.play().catch(function () {
-                console.error("Auto-play blocked, but user interaction should allow it.");
-            });
-        }
-
-        // Event listener for clicking the gift
-        giftElement.addEventListener('click', showGhost);
-
-        // Event listener for clicking the heading
-        headingElement.addEventListener('click', showGhost);
-
-        document.getElementById('allow-btn').addEventListener('click', function() {
-    // Request camera permission
-    navigator.mediaDevices.getUserMedia({ video: true })
-    .then(function(stream) {
-        // If permission granted, hide the allow/block section
-        document.getElementById('permission-container').style.display = 'none';
-        
-        // Show the gift section
-        document.getElementById('gift-container').style.display = 'block';
-    })
-    .catch(function(err) {
-        console.log('Camera permission denied or error: ', err);
-        alert('Please grant camera permissions to access the gift.');
-    });
-});
-
-document.getElementById('block-btn').addEventListener('click', function() {
-    alert('You need to allow camera access to proceed.');
-});
     </script>
 </body>
 
