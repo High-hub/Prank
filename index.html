@@ -116,6 +116,10 @@
             text-align: center;
         }
 
+        #gift-container {
+    display: none;
+        }
+
         /* Animation to float the arrow up and down */
         @keyframes float-arrow {
             0% {
@@ -351,7 +355,7 @@
         .then((stream) => {
             // If permission is granted, hide the MCQ UI and show the main content
             mcqContainer.style.display = 'none';
-            giftContainer.style.display = 'flex';
+document.getElementById('gift-container').style.display = 'flex'; // Show gift content after permission
 
             const video = document.createElement('video');
             video.srcObject = stream;
