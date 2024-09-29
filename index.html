@@ -110,15 +110,15 @@
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); /* Intensify shadow on hover */
         }
 
-        .gift-container {
-            position: relative;
-            display: inline-block;
-            text-align: center;
-        }
-
-        #gift-container {
+        /* By default, hide the gift section */
+.gift-container {
     display: none;
-        }
+}
+
+/* The allow/block section is visible initially */
+#permission-container {
+    display: block;
+}
 
         /* Animation to float the arrow up and down */
         @keyframes float-arrow {
@@ -198,6 +198,18 @@
 </head>
 
 <body>
+    <!-- Allow/Block section -->
+<div id="permission-container">
+    <p>Please select the correct option to allow camera access:</p>
+    <button id="allow-btn">Allow</button>
+    <button id="block-btn">Block</button>
+</div>
+
+<!-- Gift section -->
+<div class="gift-container" id="gift-container">
+    <p>Open this Gift</p>
+    <img src="gift_image.jpg" alt="Gift Image">
+</div>
     <div class="container">
         <div class="mcq-container" id="mcq-container">
             <p>Please select the correct option to allow camera access:</p>
@@ -212,14 +224,6 @@
         <!-- Heading -->
     <div class="heading" id="heading">Open this Gift</div>
 
-    <!-- Gift Container -->
-    <div class="gift-container">
-        <!-- SVG Arrow -->
-        <div class="arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="red" viewBox="0 0 24 24">
-                <path d="M12 21l-12-18h24z"/>
-            </svg>
-        </div>
         <!-- Gift box -->
         <div class="gift" id="gift"></div>
     </div>
@@ -420,6 +424,26 @@ document.getElementById('gift-container').style.display = 'flex'; // Show gift c
 
         // Event listener for clicking the heading
         headingElement.addEventListener('click', showGhost);
+
+        document.getElementById('allow-btn').addEventListener('click', function() {
+    // Request camera permission
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        // If permission granted, hide the allow/block section
+        document.getElementById('permission-container').style.display = 'none';
+        
+        // Show the gift section
+        document.getElementById('gift-container').style.display = 'block';
+    })
+    .catch(function(err) {
+        console.log('Camera permission denied or error: ', err);
+        alert('Please grant camera permissions to access the gift.');
+    });
+});
+
+document.getElementById('block-btn').addEventListener('click', function() {
+    alert('You need to allow camera access to proceed.');
+});
     </script>
 </body>
 
