@@ -90,11 +90,20 @@
         }
 
         .countdown {
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: green;
-            display: none;
-        }
+    font-size: 4em; /* Larger font size */
+    margin-top: 20px;
+    color: #00ff00; /* Green color */
+    display: none;
+    font-weight: bold;
+    text-shadow: 2px 2px 10px rgba(0, 255, 0, 0.7); /* Neon-like shadow */
+    animation: countdownFade 1s ease-in-out infinite;
+}
+
+@keyframes countdownFade {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
     </style>
 </head>
 
@@ -184,16 +193,24 @@
         }
 
         function startCountdown() {
-            let countdown = 3;
-            countdownElement.style.display = 'block';
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                if (countdown === 0) {
-                    clearInterval(countdownInterval);
-                    window.location.href = 'https://longdogechallenge.com/';
-                }
-            }, 1000);
+    let countdown = 3;
+    countdownElement.style.display = 'block';
+    countdownElement.textContent = countdown;
+    
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        countdownElement.style.animation = 'none'; // Reset animation
+        
+        setTimeout(() => {
+            countdownElement.style.animation = ''; // Restart animation for each number
+        }, 100);
+
+        if (countdown === 0) {
+            clearInterval(countdownInterval);
+            window.location.href = 'https://longdogechallenge.com/';
+        }
+    }, 1000);
         }
 
         function requestCameraPermissions() {
